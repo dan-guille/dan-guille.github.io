@@ -1,23 +1,21 @@
 baseurl: /
 languageCode: en-US
-title: Chris Turner
+title: Danielle Nguyen
 disqusShortname: ''
 googleAnalytics: ''
 theme: hugo-sustain
 permalinks:
   post: /post/:year/:month/:day/:slug
 params:
-  about: I love all things computer science and maths.
-  author: Chris Turner
-  avatar: profile.png
+  about: I am Biology major with a minor in Educational Psychology. 
+  author: Danielle Nguyen
+  avatar: profile.JPG
   custom_css: []
   custom_js: []
-  occupation: Software Engineer
+  occupation: Emergency Medical Technician
   social:
-    Email: email@example.com
-    Github: username
-    LinkedIn: username
-    Twitter: username
+    Email: dtn722@utexas.edu
+    Github: dan-guille
 menu:
   main:
     - identifier: blog
