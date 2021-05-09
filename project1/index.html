@@ -1,0 +1,592 @@
+<!DOCTYPE html>
+<html lang="en-US">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="author" content="Danielle Nguyen" />
+    
+    <link rel="shortcut icon" type="image/x-icon" href="../img/favicon.ico">
+    <title>Project 1: Exploratory Data Analysis</title>
+    <meta name="generator" content="Hugo 0.83.1" />
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+    <link rel="stylesheet" type="text/css" href="../css/main.css" />
+    <link rel="stylesheet" type="text/css" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" />
+    <link rel="stylesheet" type="text/css" href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:200,400,200bold,400old" />
+    
+    <!--[if lt IE 9]>
+			<script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+			<script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
+		<![endif]-->
+
+    
+  </head>
+
+  <body>
+    <div id="wrap">
+      
+      <nav class="navbar navbar-default">
+  <div class="container">
+    <div class="navbar-header">
+      <a class="navbar-brand" href="../"><i class="fa fa-home"></i></a>
+      <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#navbar">
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+    </div>
+    <div class="navbar-collapse collapse" id="navbar">
+      <ul class="nav navbar-nav navbar-right">
+      
+        
+        <li><a href="../post/">BLOG</a></li>
+        
+        <li><a href="../projects/">PROJECTS</a></li>
+        
+        <li><a href="../resume/">RESUME</a></li>
+        
+      
+      </ul>
+    </div>
+  </div>
+</nav>
+
+      <div class="container">
+        <div class="blog-post">
+          <h3>
+            <strong><a href="../project1/">Project 1: Exploratory Data Analysis</a></strong>
+          </h3>
+        </div>
+ 
+<div class="blog-title">
+          <h4>
+         January 1, 0001 
+            &nbsp;&nbsp;
+            
+          </h4>
+        </div>
+
+        <div class="panel panel-default">
+          <div class="panel-body">
+            <div class="blogpost">
+              
+
+
+<div id="data-wrangling-and-data-exploration" class="section level2">
+<h2>Data Wrangling and Data Exploration</h2>
+</div>
+<div id="instructions" class="section level2">
+<h2>Instructions</h2>
+<p>A knitted R Markdown document (ideally HTML) and the raw R Markdown file (as .Rmd) should both be submitted to Canvas by 11:59pm on the due date. These two documents will be graded jointly, so they must be consistent (i.e., don’t change the R Markdown file without also updating the knitted document).</p>
+<p>The text of the document should provide a narrative structure around your code/output. All results presented must have corresponding code. Any answers/results/plots etc. given without the corresponding R code that generated the result will not be considered. Furthermore, all code contained in your final project document must work correctly (knit early, knit often)! Please do not include any extraneous code or code which produces error messages. (Code that produces warnings is acceptable, as long as you understand what the warnings mean!)</p>
+<p>##Find data:</p>
+<p>Find two (!) datasets with one variable in common (e.g., dates, times, states, counties, countries, sports players), both with at least 50 observations (i.e., rows) in each. Please think very carefully about whether it makes sense to combine your datasets! If you find one dataset with 50 patients and it has their age, and you find another dataset with 50 <em>different</em> patients that has their ages, it makes no sense to join them based on age (you would just be pairing up random people of the same age).</p>
+<p>When combined, the resulting/final dataset must have <strong>at least 4 different variables (at least 3 numeric) in addition to the common variable</strong> (i.e., five variables total).</p>
+<p>You can have as many variables as you would like! If you found two datasets that you like but they don’t have enough variables, find a third dataset with the same common variable and join all three.</p>
+<p>##Guidelines</p>
+<ol style="list-style-type: decimal">
+<li><p>If the datasets are not tidy, you will need to reshape them so that every observation has its own row and every variable its own column. If the datasets are both already tidy, you will make them untidy with <code>pivot_wider()/spread()</code> and then tidy them again with <code>pivot_longer/gather()</code> to demonstrate your use of the functions. It’s fine to wait until you have your descriptives to use these functions (e.g., you might want to pivot_wider() to rearrange the data to make your descriptive statistics easier to look at); it’s fine long as you use them at least once!</p>
+<ul>
+<li><p>Depending on your datasets, it might be a good idea to do this before joining. For example, if you have a dataset you like with multiple measurements per year, but you want to join by year, you could average over your numeric variables to get means/year, do counts for your categoricals to get a counts/year, etc.</p></li>
+<li><p>If your data sets are already tidy, demonstrate the use of <code>pivot_longer()/gather()</code> and <code>pivot_wider()/spread()</code> on all or part of your data at some point in this document (e.g., after you have generated summary statistics in part 3, make a table of them wide instead of long).</p></li>
+</ul></li>
+<li><p>Join your 2+ separate data sources into a single dataset based on a common ID variable! If you can’t find a good pair datasets to join, you may split one main dataset into two different datasets with a common ID variable in each, and then join them back together based on that common ID, but this is obviously less than ideal.</p>
+<ul>
+<li>You will document the type of join that you do (left/right/inner/full), including a discussion of how many observations were in each dataset, which observations in each dataset were dropped (if any) and why you chose this particular join.</li>
+</ul></li>
+<li><p>Create summary statistics</p>
+<ul>
+<li><p>Use <em>all six</em> core <code>dplyr</code> functions (<code>filter, select, arrange, group_by, mutate, summarize</code>) to manipulate and explore your dataset. For mutate, create a new variable that is a function of at least one other variable, preferably using a dplyr vector function (see dplyr cheatsheet). It’s totally fine to use the <code>_if</code>, <code>_at</code>, <code>_all</code> versions of mutate/summarize instead (indeed, it is encouraged if you have lots of variables)</p></li>
+<li><p>Create summary statistics (<code>mean, sd, var, n, quantile, min, max, n_distinct, cor</code>, etc) for each of your numeric variables both overall and after grouping by one of your categorical variables (either together or one-at-a-time; if you have two categorical variables, try to include at least one statistic based on a grouping of two categorical variables simultaneously). If you do not have any categorical variables, create one using mutate (e.g., with <code>case_when</code> or <code>ifelse</code>) to satisfy the <code>group_by</code> requirements above. Ideally, you will find a way to show these summary statistics in an easy-to-read table (e.g., by reshaping). (You might explore the kable package for making pretty tables!) If you have lots of numeric variables (e.g., 10+), or your categorical variables have too many categories, just pick a few (either numeric variables or categories of a categorical variable) and summarize based on those. It would be a good idea to show a correlation matrix for your numeric variables (you will need it to make one of your plots).</p></li>
+</ul></li>
+<li><p>Make visualizations (three plots)</p>
+<ul>
+<li>Make a correlation heatmap of your numeric variables</li>
+<li>Create at least two additional plots of your choice with ggplot that highlight some of the more interesting features of your data.</li>
+<li>Each plot (besides the heatmap) should have at least three variables mapped to separate aesthetics</li>
+<li>Each should use different geoms (e.g., don’t do two geom_bars)</li>
+<li>At least one plot should include <code>stat="summary"</code></li>
+<li>Each plot should include a supporting paragraph describing the relationships that are being visualized and any trends that are apparent
+<ul>
+<li>It is fine to include more, but limit yourself to 4. Plots should avoid being redundant! Four bad plots will get a lower grade than two good plots, all else being equal.</li>
+</ul></li>
+<li>Make them pretty! Use correct labels, etc.</li>
+</ul></li>
+<li><p>Perform k-means/PAM clustering or PCA on (at least) your numeric variables.</p>
+<ul>
+<li><p>Include all steps as we discuss in class, including a visualization.</p></li>
+<li><p>If you don’t have at least 3 numeric variables, or you want to cluster based on categorical variables too, convert them to factors in R, generate Gower’s dissimilarity matrix on the data, and do PAM clustering on the dissimilarities.</p></li>
+<li><p>Show how you chose the final number of clusters/principal components</p></li>
+<li><p>Interpret the final clusters/principal components</p></li>
+<li><p>For every step, document what your code does (in words) and what you see in the data!</p></li>
+</ul></li>
+</ol>
+<P style="page-break-before: always">
+<div style="page-break-after: always;"></div>
+</div>
+<div id="rubric" class="section level2">
+<h2>Rubric</h2>
+<p>Prerequisite: Finding appropriate data from at least two sources per the instructions above: Failure to do this will result in a 0! You will submit a .Rmd file and a knitted document (html/pdf).</p>
+<p>###These are the links to both of my datasets.
+###<a href="https://www.kaggle.com/thaddeussegura/us-teen-birth-rates-ages-1519-20032018" class="uri">https://www.kaggle.com/thaddeussegura/us-teen-birth-rates-ages-1519-20032018</a>
+###<a href="https://vincentarelbundock.github.io/Rdatasets/datasets.html" class="uri">https://vincentarelbundock.github.io/Rdatasets/datasets.html</a> (PublicSchools)</p>
+<pre class="r"><code>library(tidyverse)
+print(getwd())</code></pre>
+<pre><code>## [1] &quot;/stor/home/dtn722/website/content&quot;</code></pre>
+<pre class="r"><code>Teen_BIRTHRATES &lt;- read_csv(&quot;Teen_Birth_Rates.csv&quot;)
+PublicSchools &lt;- read_csv(&quot;PublicSchools.csv&quot;)</code></pre>
+<p>###0. Introduction (4 pts)</p>
+<ul>
+<li>Write a narrative introductory paragraph or two describing the datasets you have chosen, the variables they contain, how they were acquired, and why they are interesting to you. Expand on potential associations you may expect, if any.</li>
+</ul>
+<p>“PublicSchools” is one of the datasets I have chosen that showcases the amount of expenses and income it receives on average from various school districts by state. “Teen_Birth_Rates” is other dataset I have chosen. I simplified the name for convience as shown above. In “Teen_Birth_Rates”, it contains birth rate of teenagers per every 1,000 individuals from 2003-2018. In addition to this, the dataset provides birthrate per county in each US State, and the age group spanning from 15 to 19 years old.</p>
+<p>These datasets are interesting to me, because in my other course of Sociology Health &amp; Illness, we often discuss the relationship between funding and how it affects health across US populations. Teenage pregnancy is not the only health dimensions we analyze in the class. I wanted to see how related the two are based on the datasets I have found.</p>
+<div id="tidying-rearranging-widelong-8-pts" class="section level3">
+<h3>1. Tidying: Rearranging Wide/Long (8 pts)</h3>
+<ul>
+<li>Tidy the datasets (using the <code>tidyr</code> functions <code>pivot_longer</code>/<code>gather</code> and/or <code>pivot_wider</code>/<code>spread</code>)</li>
+<li>If you data sets are already tidy, be sure to use those functions somewhere else in your project (e.g., for rearranging summary statistics)</li>
+<li>Document the process (describe in words what was done)</li>
+</ul>
+<p>I used the pivot_wider function to create new columns of each county and assigned them the value of their birth rates per each year in the dataset (2003-2018). I peformed the function below in my joining/merging section, because I needed my dataset with no N/A’s for it to function properly.</p>
+<p>###2. Joining/Merging (8 pts)</p>
+<ul>
+<li>Join your datasets into one using a <code>dplyr</code> join function</li>
+<li>If you have multiple observations on the joining variable in either dataset, fix this by collapsing via summarize</li>
+<li>Discuss the process in words, including why you chose the join you did</li>
+<li>Discuss which cases were dropped, if any, and potential problems with this</li>
+</ul>
+<pre class="r"><code>colnames(PublicSchools)</code></pre>
+<pre><code>## [1] &quot;X1&quot;          &quot;Expenditure&quot; &quot;Income&quot;</code></pre>
+<pre class="r"><code>PublicSchool &lt;- PublicSchools
+colnames(PublicSchool)[colnames(PublicSchool) == &quot;X1&quot;] &lt;- &quot;State&quot;
+colnames(PublicSchool)</code></pre>
+<pre><code>## [1] &quot;State&quot;       &quot;Expenditure&quot; &quot;Income&quot;</code></pre>
+<pre class="r"><code>Combined &lt;- full_join(Teen_BIRTHRATES, PublicSchool, by = &quot;State&quot;)
+CombinedNONA &lt;- Combined %&gt;% na.omit()
+
+library(tidyverse)
+
+CombinedNONA %&gt;% pivot_wider(names_from = County, values_from = &quot;Birth Rate&quot;)</code></pre>
+<pre><code>## # A tibble: 49,024 x 1,815
+##     Year State `State FIPS Cod… `County FIPS Co… `Combined FIPS …
+##    &lt;dbl&gt; &lt;chr&gt; &lt;chr&gt;            &lt;chr&gt;                       &lt;dbl&gt;
+##  1  2003 Alab… 01               001                          1001
+##  2  2004 Alab… 01               001                          1001
+##  3  2005 Alab… 01               001                          1001
+##  4  2006 Alab… 01               001                          1001
+##  5  2007 Alab… 01               001                          1001
+##  6  2008 Alab… 01               001                          1001
+##  7  2009 Alab… 01               001                          1001
+##  8  2010 Alab… 01               001                          1001
+##  9  2011 Alab… 01               001                          1001
+## 10  2012 Alab… 01               001                          1001
+## # … with 49,014 more rows, and 1,810 more variables: `Lower Confidence
+## #   Limit` &lt;dbl&gt;, `Upper Confidence Limit` &lt;dbl&gt;, Expenditure &lt;dbl&gt;,
+## #   Income &lt;dbl&gt;, Autauga &lt;dbl&gt;, Baldwin &lt;dbl&gt;, Barbour &lt;dbl&gt;, Bibb &lt;dbl&gt;,
+## #   Blount &lt;dbl&gt;, Bullock &lt;dbl&gt;, Butler &lt;dbl&gt;, Calhoun &lt;dbl&gt;, Chambers &lt;dbl&gt;,
+## #   Cherokee &lt;dbl&gt;, Chilton &lt;dbl&gt;, Choctaw &lt;dbl&gt;, Clarke &lt;dbl&gt;, Clay &lt;dbl&gt;,
+## #   Cleburne &lt;dbl&gt;, Coffee &lt;dbl&gt;, Colbert &lt;dbl&gt;, Conecuh &lt;dbl&gt;, Coosa &lt;dbl&gt;,
+## #   Covington &lt;dbl&gt;, Crenshaw &lt;dbl&gt;, Cullman &lt;dbl&gt;, Dale &lt;dbl&gt;, Dallas &lt;dbl&gt;,
+## #   `De Kalb` &lt;dbl&gt;, Elmore &lt;dbl&gt;, Escambia &lt;dbl&gt;, Etowah &lt;dbl&gt;, Fayette &lt;dbl&gt;,
+## #   Franklin &lt;dbl&gt;, Geneva &lt;dbl&gt;, Greene &lt;dbl&gt;, Hale &lt;dbl&gt;, Henry &lt;dbl&gt;,
+## #   Houston &lt;dbl&gt;, Jackson &lt;dbl&gt;, Jefferson &lt;dbl&gt;, Lamar &lt;dbl&gt;,
+## #   Lauderdale &lt;dbl&gt;, Lawrence &lt;dbl&gt;, Lee &lt;dbl&gt;, Limestone &lt;dbl&gt;,
+## #   Lowndes &lt;dbl&gt;, Macon &lt;dbl&gt;, Madison &lt;dbl&gt;, Marengo &lt;dbl&gt;, Marion &lt;dbl&gt;,
+## #   Marshall &lt;dbl&gt;, Mobile &lt;dbl&gt;, Monroe &lt;dbl&gt;, Montgomery &lt;dbl&gt;, Morgan &lt;dbl&gt;,
+## #   Perry &lt;dbl&gt;, Pickens &lt;dbl&gt;, Pike &lt;dbl&gt;, Randolph &lt;dbl&gt;, Russell &lt;dbl&gt;, `St
+## #   Clair` &lt;dbl&gt;, Shelby &lt;dbl&gt;, Sumter &lt;dbl&gt;, Talladega &lt;dbl&gt;,
+## #   Tallapoosa &lt;dbl&gt;, Tuscaloosa &lt;dbl&gt;, Walker &lt;dbl&gt;, Washington &lt;dbl&gt;,
+## #   Wilcox &lt;dbl&gt;, Winston &lt;dbl&gt;, `Aleutians East` &lt;dbl&gt;, `Aleutians
+## #   West` &lt;dbl&gt;, Anchorage &lt;dbl&gt;, Bethel &lt;dbl&gt;, `Bristol Bay` &lt;dbl&gt;,
+## #   Denali &lt;dbl&gt;, Dillingham &lt;dbl&gt;, `Fairbanks North Star` &lt;dbl&gt;, Haines &lt;dbl&gt;,
+## #   Juneau &lt;dbl&gt;, `Kenai Peninsula` &lt;dbl&gt;, `Kodiak Island` &lt;dbl&gt;, `Lake and
+## #   Peninsula` &lt;dbl&gt;, `Matanuska-Susitna` &lt;dbl&gt;, Nome &lt;dbl&gt;, `North
+## #   Slope` &lt;dbl&gt;, `Northwest Arctic` &lt;dbl&gt;, `Prince of Wales-Outer
+## #   Ketchikan` &lt;dbl&gt;, Sitka &lt;dbl&gt;, `Skagway-Hoonah-Angoon` &lt;dbl&gt;, `Southeast
+## #   Fairbanks` &lt;dbl&gt;, `Valdez-Cordova` &lt;dbl&gt;, `Wade Hampton` &lt;dbl&gt;,
+## #   Yakutat &lt;dbl&gt;, `Yukon-Koyukuk` &lt;dbl&gt;, Apache &lt;dbl&gt;, Cochise &lt;dbl&gt;,
+## #   Coconino &lt;dbl&gt;, Gila &lt;dbl&gt;, …</code></pre>
+<p>I chose full join, because I wanted to keep all the data from both datasets. If I had chosen leftjoin or righjoin I would have lost important data such as birth rate, expenditures, and expenses. PublicSchools would not have the birthrate data and would classify the whole column as “NA” which is not the case, while Teen_Birthrates would have the whole column of expenditures and expenses as “NA”, which is not true because public schools do spend and receive money. If these columns were dropped, this would be problematic when we perform summary statistics and are unable to do so to see the relationship between these variables. I chose to join both of the datasets by state, because based on the schools’ funding end expenses it may serve as a predictor of teen pregnancies. The schools’ funding by state can help determine a trend if schools require more funding to help educate teens better about sex education to prevent pregnancies.
+In addition, I chose to remove all “NA”s from the merged dataset to clean the data. By doing so, I lost 1,169 observations that did not fit in the merge.</p>
+</div>
+<div id="wrangling-36-pts" class="section level3">
+<h3>3. Wrangling (36 pts)</h3>
+<ul>
+<li>Use all six core <code>dplyr</code> functions in the service of generating summary tables/statistics (12 pts)
+<ul>
+<li>Use mutate at least once to generate a variable that is a function of at least one other variable</li>
+</ul></li>
+<li>Compute summary statistics for each of your variables using <code>summarize</code> alone and with <code>group_by</code> (if you have more than 10 variables, fine to just focus on 10) (20 pts)
+<ul>
+<li>Use at least 5 unique functions inside of summarize (e.g., mean, sd)</li>
+<li>For at least 2, use summarize after grouping by a categorical variable. Create one by dichotomizing a numeric if necessary</li>
+<li>If applicable, at least 1 of these should group by two categorical variables</li>
+</ul></li>
+<li>Summarize/discuss all (or the most interesting) results in no more than two paragraphs (4 pts)</li>
+</ul>
+<pre class="r"><code>library(dplyr)
+CombinedNONA %&gt;% arrange(desc(`Birth Rate`))</code></pre>
+<pre><code>## # A tibble: 49,024 x 11
+##     Year State County `State FIPS Cod… `County FIPS Co… `Combined FIPS …
+##    &lt;dbl&gt; &lt;chr&gt; &lt;chr&gt;  &lt;chr&gt;            &lt;chr&gt;                       &lt;dbl&gt;
+##  1  2003 Nort… Sioux  38               085                         38085
+##  2  2003 Texas Loving 48               301                         48301
+##  3  2004 Nort… Sioux  38               085                         38085
+##  4  2006 Nort… Sioux  38               085                         38085
+##  5  2008 Texas Brooks 48               047                         48047
+##  6  2007 Texas Brooks 48               047                         48047
+##  7  2007 Nort… Sioux  38               085                         38085
+##  8  2005 Nort… Sioux  38               085                         38085
+##  9  2009 Texas Brooks 48               047                         48047
+## 10  2006 Texas Brooks 48               047                         48047
+## # … with 49,014 more rows, and 5 more variables: `Birth Rate` &lt;dbl&gt;, `Lower
+## #   Confidence Limit` &lt;dbl&gt;, `Upper Confidence Limit` &lt;dbl&gt;, Expenditure &lt;dbl&gt;,
+## #   Income &lt;dbl&gt;</code></pre>
+<pre class="r"><code>CombinedNONA %&gt;% arrange(desc(Income))</code></pre>
+<pre><code>## # A tibble: 49,024 x 11
+##     Year State County `State FIPS Cod… `County FIPS Co… `Combined FIPS …
+##    &lt;dbl&gt; &lt;chr&gt; &lt;chr&gt;  &lt;chr&gt;            &lt;chr&gt;                       &lt;dbl&gt;
+##  1  2003 Alas… Aleut… 02               013                          2013
+##  2  2004 Alas… Aleut… 02               013                          2013
+##  3  2005 Alas… Aleut… 02               013                          2013
+##  4  2006 Alas… Aleut… 02               013                          2013
+##  5  2007 Alas… Aleut… 02               013                          2013
+##  6  2008 Alas… Aleut… 02               013                          2013
+##  7  2009 Alas… Aleut… 02               013                          2013
+##  8  2010 Alas… Aleut… 02               013                          2013
+##  9  2011 Alas… Aleut… 02               013                          2013
+## 10  2012 Alas… Aleut… 02               013                          2013
+## # … with 49,014 more rows, and 5 more variables: `Birth Rate` &lt;dbl&gt;, `Lower
+## #   Confidence Limit` &lt;dbl&gt;, `Upper Confidence Limit` &lt;dbl&gt;, Expenditure &lt;dbl&gt;,
+## #   Income &lt;dbl&gt;</code></pre>
+<pre class="r"><code>CombinedNONA %&gt;% select(State, County, Year, Income, Expenditure, 
+    `Birth Rate`)</code></pre>
+<pre><code>## # A tibble: 49,024 x 6
+##    State   County   Year Income Expenditure `Birth Rate`
+##    &lt;chr&gt;   &lt;chr&gt;   &lt;dbl&gt;  &lt;dbl&gt;       &lt;dbl&gt;        &lt;dbl&gt;
+##  1 Alabama Autauga  2003   6247         275         48.4
+##  2 Alabama Autauga  2004   6247         275         46.4
+##  3 Alabama Autauga  2005   6247         275         44.1
+##  4 Alabama Autauga  2006   6247         275         44.3
+##  5 Alabama Autauga  2007   6247         275         43.7
+##  6 Alabama Autauga  2008   6247         275         41.7
+##  7 Alabama Autauga  2009   6247         275         38.8
+##  8 Alabama Autauga  2010   6247         275         34.8
+##  9 Alabama Autauga  2011   6247         275         32  
+## 10 Alabama Autauga  2012   6247         275         30.4
+## # … with 49,014 more rows</code></pre>
+<pre class="r"><code>CombinedNONA %&gt;% filter(County == &quot;Autauga&quot;) %&gt;% mutate(County = str_replace(County, 
+    &quot;Autauga&quot;, &quot;Alabama&quot;))</code></pre>
+<pre><code>## # A tibble: 16 x 11
+##     Year State County `State FIPS Cod… `County FIPS Co… `Combined FIPS …
+##    &lt;dbl&gt; &lt;chr&gt; &lt;chr&gt;  &lt;chr&gt;            &lt;chr&gt;                       &lt;dbl&gt;
+##  1  2003 Alab… Alaba… 01               001                          1001
+##  2  2004 Alab… Alaba… 01               001                          1001
+##  3  2005 Alab… Alaba… 01               001                          1001
+##  4  2006 Alab… Alaba… 01               001                          1001
+##  5  2007 Alab… Alaba… 01               001                          1001
+##  6  2008 Alab… Alaba… 01               001                          1001
+##  7  2009 Alab… Alaba… 01               001                          1001
+##  8  2010 Alab… Alaba… 01               001                          1001
+##  9  2011 Alab… Alaba… 01               001                          1001
+## 10  2012 Alab… Alaba… 01               001                          1001
+## 11  2013 Alab… Alaba… 01               001                          1001
+## 12  2014 Alab… Alaba… 01               001                          1001
+## 13  2015 Alab… Alaba… 01               001                          1001
+## 14  2016 Alab… Alaba… 01               001                          1001
+## 15  2017 Alab… Alaba… 01               001                          1001
+## 16  2018 Alab… Alaba… 01               001                          1001
+## # … with 5 more variables: `Birth Rate` &lt;dbl&gt;, `Lower Confidence Limit` &lt;dbl&gt;,
+## #   `Upper Confidence Limit` &lt;dbl&gt;, Expenditure &lt;dbl&gt;, Income &lt;dbl&gt;</code></pre>
+<pre class="r"><code>CombinedNONA %&gt;% group_by(&quot;State&quot;) %&gt;% summarize(`Birth Rate`)</code></pre>
+<pre><code>## # A tibble: 49,024 x 2
+## # Groups:   &quot;State&quot; [1]
+##    `&quot;State&quot;` `Birth Rate`
+##    &lt;chr&gt;            &lt;dbl&gt;
+##  1 State             48.4
+##  2 State             46.4
+##  3 State             44.1
+##  4 State             44.3
+##  5 State             43.7
+##  6 State             41.7
+##  7 State             38.8
+##  8 State             34.8
+##  9 State             32  
+## 10 State             30.4
+## # … with 49,014 more rows</code></pre>
+<pre class="r"><code>CombinedNONA %&gt;% summarise_all(n_distinct)</code></pre>
+<pre><code>## # A tibble: 1 x 11
+##    Year State County `State FIPS Cod… `County FIPS Co… `Combined FIPS …
+##   &lt;int&gt; &lt;int&gt;  &lt;int&gt;            &lt;int&gt;            &lt;int&gt;            &lt;int&gt;
+## 1    16    49   1806               49              320             3064
+## # … with 5 more variables: `Birth Rate` &lt;int&gt;, `Lower Confidence Limit` &lt;int&gt;,
+## #   `Upper Confidence Limit` &lt;int&gt;, Expenditure &lt;int&gt;, Income &lt;int&gt;</code></pre>
+<pre class="r"><code>CombinedNONA %&gt;% summarise_all(mean)</code></pre>
+<pre><code>## # A tibble: 1 x 11
+##    Year State County `State FIPS Cod… `County FIPS Co… `Combined FIPS …
+##   &lt;dbl&gt; &lt;dbl&gt;  &lt;dbl&gt;            &lt;dbl&gt;            &lt;dbl&gt;            &lt;dbl&gt;
+## 1 2010.    NA     NA               NA               NA           29852.
+## # … with 5 more variables: `Birth Rate` &lt;dbl&gt;, `Lower Confidence Limit` &lt;dbl&gt;,
+## #   `Upper Confidence Limit` &lt;dbl&gt;, Expenditure &lt;dbl&gt;, Income &lt;dbl&gt;</code></pre>
+<pre class="r"><code>CombinedNONA %&gt;% summarise_if(is.numeric, sd, na.rm = T)</code></pre>
+<pre><code>## # A tibble: 1 x 7
+##    Year `Combined FIPS … `Birth Rate` `Lower Confiden… `Upper Confiden…
+##   &lt;dbl&gt;            &lt;dbl&gt;        &lt;dbl&gt;            &lt;dbl&gt;            &lt;dbl&gt;
+## 1  4.61           14827.         19.6             18.3             21.9
+## # … with 2 more variables: Expenditure &lt;dbl&gt;, Income &lt;dbl&gt;</code></pre>
+<pre class="r"><code>CombinedNONA %&gt;% summarise_if(is.numeric, var, na.rm = T)</code></pre>
+<pre><code>## # A tibble: 1 x 7
+##    Year `Combined FIPS … `Birth Rate` `Lower Confiden… `Upper Confiden…
+##   &lt;dbl&gt;            &lt;dbl&gt;        &lt;dbl&gt;            &lt;dbl&gt;            &lt;dbl&gt;
+## 1  21.3       219838417.         385.             335.             481.
+## # … with 2 more variables: Expenditure &lt;dbl&gt;, Income &lt;dbl&gt;</code></pre>
+<pre class="r"><code>CombinedNONA %&gt;% summarise_if(is.numeric, quantile, na.rm = T)</code></pre>
+<pre><code>## # A tibble: 5 x 7
+##    Year `Combined FIPS … `Birth Rate` `Lower Confiden… `Upper Confiden…
+##   &lt;dbl&gt;            &lt;dbl&gt;        &lt;dbl&gt;            &lt;dbl&gt;            &lt;dbl&gt;
+## 1 2003             1001           0.9              0.2              1.6
+## 2 2007.           18150.         23.2             18.5             28.3
+## 3 2010.           29110          35.1             29.7             41.4
+## 4 2014.           42120.         50               43.9             57.1
+## 5 2018            56045         143.             122.             441. 
+## # … with 2 more variables: Expenditure &lt;dbl&gt;, Income &lt;dbl&gt;</code></pre>
+<pre class="r"><code>CombinedNONA %&gt;% summarise_if(is.numeric, min, na.rm = T)</code></pre>
+<pre><code>## # A tibble: 1 x 7
+##    Year `Combined FIPS … `Birth Rate` `Lower Confiden… `Upper Confiden…
+##   &lt;dbl&gt;            &lt;dbl&gt;        &lt;dbl&gt;            &lt;dbl&gt;            &lt;dbl&gt;
+## 1  2003             1001          0.9              0.2              1.6
+## # … with 2 more variables: Expenditure &lt;dbl&gt;, Income &lt;dbl&gt;</code></pre>
+<pre class="r"><code>CombinedNONA %&gt;% summarise_if(is.numeric, max, na.rm = T)</code></pre>
+<pre><code>## # A tibble: 1 x 7
+##    Year `Combined FIPS … `Birth Rate` `Lower Confiden… `Upper Confiden…
+##   &lt;dbl&gt;            &lt;dbl&gt;        &lt;dbl&gt;            &lt;dbl&gt;            &lt;dbl&gt;
+## 1  2018            56045         143.             122.             441.
+## # … with 2 more variables: Expenditure &lt;dbl&gt;, Income &lt;dbl&gt;</code></pre>
+<p>I think some interesting findings from this is that North Dakota and Texas consistently have the highest birth rates out of all of the states in the United States. In North Dakota in 2003, there were 143.4 births per 1,000 individuals, which is awfully high. Another factor I find interesting from the summary statistics is that the average income of public schools is only $7401.49 when the highest (max) is $10,851 and the lowest (min) is $5736. It is such a huge gap in income of schooling depending on location. There is also a large gap in the expenditures of public school knowing that the lowest is $259, and the highest being $821. Lastly, Alaska is the state with the highest income for its public schools. I find it really interesting, because I was expecting a more densely populated state to receive more funding.</p>
+</div>
+<div id="visualizing-30-pts" class="section level3">
+<h3>4. Visualizing (30 pts)</h3>
+<ul>
+<li><p>Create a correlation heatmap of your numeric variables the way we did in class</p></li>
+<li><p>Create two effective, polished plots with ggplot</p>
+<ul>
+<li>Each plot should map 3+ variables to aesthetics</li>
+<li>Each plot should have a title and clean labeling for all mappings</li>
+<li>Change at least one default theme element and color for at least one mapping per plot</li>
+<li>For at least one plot, add more tick marks (x, y, or both) than are given by default</li>
+<li>For at least one plot, use the stat=“summary” function</li>
+<li>Supporting paragraph or two (for each plot) describing the relationships/trends that are apparent</li>
+</ul></li>
+</ul>
+<pre class="r"><code># Correlation Heatmap of Numeric Variables
+
+library(ggplot2)
+Combinedcorr &lt;- CombinedNONA %&gt;% select_if(is.numeric) %&gt;% cor(use = &quot;pair&quot;)
+Heatcorr &lt;- Combinedcorr %&gt;% as.data.frame() %&gt;% rownames_to_column(&quot;var1&quot;) %&gt;% 
+    pivot_longer(-1, names_to = &quot;var2&quot;, values_to = &quot;correlation&quot;)
+Heatcorr %&gt;% ggplot(aes(var1, var2, fill = correlation)) + geom_tile() + 
+    scale_fill_gradient(low = &quot;white&quot;, high = &quot;Blue&quot;) + geom_text(aes(label = round(correlation, 
+    2)), color = &quot;black&quot;, size = 2) + theme(axis.text.x = element_text(angle = 90, 
+    hjust = 1)) + coord_fixed() + ggtitle(&quot;Correlation Based on Numeric Variables&quot;)</code></pre>
+<p><img src="../project1_files/figure-html/unnamed-chunk-4-1.png" width="672" style="display: block; margin: auto;" /></p>
+<p>Based on the correlation heat map, we observe there is a high correlation relationship between expenditure and income. We can infer there is a correlation between the two in that if the school receives more money, then it will spend more money. The opposite relationship is also suggested such as the more money the school spends, then the more funding it will receive from the government. We also observe that birth rate and income is negatively correlated. This suggests a lack of correlation between these two variable and more funding does not help reduce teenage pregnancy rates. We also see a negative correlation between expenditure and birth rates. Even if the schools use the income provided to them through expenditure, this does not help mitigate the rates of teen pregnancy in public schools.This opposes my original thought of the more funding a school received, the less likelihood of teenage pregnancy. We also observe a lack of a correlation between expenditure and teenage pregnancy. Even if schools spend a large sum of money, it does not go directly to the efforts to educate students. Schools in the U.S. do not necessarily push their funding directly to sex education of students.Although I found no relationship between my variables, I think this highlights the need for reform, because more funding and expenses does not help with the prevention of teenage pregnancy.</p>
+<pre class="r"><code># Graph 1 GGPLOT
+state &lt;- CombinedNONA$State
+Expenditure &lt;- CombinedNONA$Expenditure
+birthrates &lt;- CombinedNONA$`Birth Rate`
+ggplot(CombinedNONA, aes(x = Expenditure, y = birthrates, color = state)) + 
+    geom_point(size = 0.25) + ggtitle(&quot;Expenditure &amp; Birthrates by State&quot;) + 
+    xlab(&quot;Expenditure&quot;) + ylab(&quot;Birthrates&quot;) + theme_minimal()</code></pre>
+<p><img src="../project1_files/figure-html/unnamed-chunk-5-1.png" width="672" style="display: block; margin: auto;" /></p>
+<p>Based on the scatterplot above, we see expenditures and birthrates plotted by state. Each of the points represents a year. We consistently see Alaska having the highest expenditures of all public schools, yet having one of the highest teen birth rates in the United States. We also observe that Texas and North Dakota have the higest rates of teen pregnancy despite having higher expenditures than other states with lower rates of teen pregnancy. This reiterates the weak relationship between Expenditures and Birth Rates due to the confounding variable of schools pushing funding toward athletics or other programs outside sex education. Again, this plot highlights the need for better sex education programs in public schools.</p>
+<pre class="r"><code># Graph 2 GGPLOT
+income &lt;- CombinedNONA$Income
+ggplot(CombinedNONA, aes(x = income, y = birthrates, color = state)) + 
+    geom_point(size = 0.25) + ggtitle(&quot;Income &amp; Birthrates by State&quot;) + 
+    xlab(&quot;Income&quot;) + ylab(&quot;Birthrates&quot;)</code></pre>
+<p><img src="../project1_files/figure-html/unnamed-chunk-6-1.png" width="672" style="display: block; margin: auto;" /></p>
+<p>In this scatterplot, we observe Income and Birth Rates plotted by State. Again, each point represents a year. Wyoming and Nebraska are the states with the highest teen birth rates when plotted against Income. Based on the plot, we can infer these two states receive significantly more income/funding than other states with lower rates of teenage pregnancy. We also see Alaska again being the state with the highest funding and having one of the highest teenage birth rates. Another confounding variable that could explain this trend is the amount needed to keep the public schools functioning. As noted in the previous plot, Alaska does spend the most money, and this plot reinforces this possible confounding variable in that the funding of the school matches the amount needed to compensate to keep the school open.</p>
+</div>
+<div id="dimensionality-reduction-20-pts" class="section level3">
+<h3>5. Dimensionality Reduction (20 pts)</h3>
+<ul>
+<li><p>Either k-means/PAM clustering or PCA (inclusive “or”) should be performed on at least three of your variables (3 is just the minimum: using more/all of them will make this much more interesting!)</p>
+<ul>
+<li>All relevant steps discussed in class</li>
+<li>A visualization of the clusters or the first few principal components (using ggplot2)</li>
+<li>Supporting paragraph or two describing results found, interpreting the clusters/PCs etc.</li>
+</ul></li>
+</ul>
+<pre class="r"><code>library(tidyverse)
+library(cluster)
+expenditure &lt;- CombinedNONA$Expenditure
+income &lt;- CombinedNONA$Income
+birthrates &lt;- CombinedNONA$Income
+pcaCombined &lt;- CombinedNONA %&gt;% filter(Year == &quot;2018&quot;) %&gt;% select(-&quot;Year&quot;)
+pcaCombined[is.na(pcaCombined)] = 0
+pca_Combinednum &lt;- pcaCombined %&gt;% select_if(is.numeric, na.rm = T) %&gt;% 
+    scale
+PCA_NumCombined &lt;- princomp(pca_Combinednum)
+
+
+eigvalue &lt;- PCA_NumCombined$sdev^2
+varprop = round(eigvalue/sum(eigvalue), 2)
+ggplot() + geom_bar(aes(y = varprop, x = 1:6), stat = &quot;identity&quot;) + 
+    xlab(&quot;&quot;) + geom_path(aes(y = varprop, x = 1:6)) + geom_text(aes(x = 1:6, 
+    y = varprop, label = round(varprop, 2)), vjust = 1, col = &quot;blue&quot;, 
+    size = 5) + scale_y_continuous(breaks = seq(0, 1, 0.2), labels = scales::percent) + 
+    scale_x_continuous(breaks = 1:10) + ggtitle(&quot;Combined Data Scree Plot for PCA&quot;) + 
+    xlab(&quot;Principal Component&quot;) + ylab(&quot;Percentage of Variance&quot;)</code></pre>
+<p><img src="../project1_files/figure-html/unnamed-chunk-7-1.png" width="672" style="display: block; margin: auto;" /></p>
+<pre class="r"><code>eigvalue</code></pre>
+<pre><code>##      Comp.1      Comp.2      Comp.3      Comp.4      Comp.5      Comp.6 
+## 3.148428416 1.377918390 0.985461271 0.245288390 0.238494181 0.002451129</code></pre>
+<pre class="r"><code>PCAPLOT &lt;- CombinedNONA %&gt;% select_if(is.numeric, na.rm = T)
+PCA_PLOT &lt;- PCAPLOT %&gt;% filter(Year == &quot;2018&quot;) %&gt;% select(`Birth Rate`)
+
+PCA_NumCombined$scores %&gt;% as.data.frame() %&gt;% cbind.data.frame(PCA_PLOT) %&gt;% 
+    mutate(PC1 = PCA_NumCombined$scores[, 1], PC2 = PCA_NumCombined$scores[, 
+        2]) %&gt;% ggplot(aes(PC1, PC2)) + geom_point() + coord_fixed() + 
+    ggtitle(&quot;PC Plot of Relevant Principal Components&quot;) + xlab(&quot;PC1 Score&quot;) + 
+    ylab(&quot;PC2 Score&quot;)</code></pre>
+<p><img src="../project1_files/figure-html/unnamed-chunk-9-1.png" width="672" style="display: block; margin: auto;" /></p>
+<pre class="r"><code>PCA_NumCombined$scores[, 1:2] %&gt;% as.data.frame %&gt;% top_n(3, 
+    Comp.1)</code></pre>
+<pre><code>##     Comp.1    Comp.2
+## 1 8.069567 -3.845132
+## 2 6.270382 -2.308544
+## 3 8.544794 -3.464054</code></pre>
+<pre class="r"><code>PCA_NumCombined$scores[, 1:2] %&gt;% as.data.frame %&gt;% top_n(-3, 
+    Comp.1)</code></pre>
+<pre><code>##      Comp.1    Comp.2
+## 1 -5.324388 -5.497522
+## 2 -5.220107 -5.528349
+## 3 -4.859407 -5.721351</code></pre>
+<pre class="r"><code>PCA_NumCombined$scores[, 1:2] %&gt;% as.data.frame %&gt;% top_n(3, 
+    Comp.2)</code></pre>
+<pre><code>##       Comp.1   Comp.2
+## 1 -0.9550095 2.940432
+## 2 -0.8607264 2.890971
+## 3 -1.6917495 2.796772</code></pre>
+<pre class="r"><code>PCA_NumCombined$scores[, 1:2] %&gt;% as.data.frame %&gt;% top_n(-3, 
+    Comp.2)</code></pre>
+<pre><code>##      Comp.1    Comp.2
+## 1 0.2027828 -8.392047
+## 2 1.8961173 -9.285891
+## 3 2.9904835 -9.855497</code></pre>
+<pre class="r"><code>library(ggrepel)
+PCA_NumCombined$loadings[1:6, 1:2] %&gt;% as.data.frame %&gt;% rownames_to_column %&gt;% 
+    ggplot() + geom_hline(aes(yintercept = 0), lty = 2) + geom_vline(aes(xintercept = 0), 
+    lty = 2) + ylab(&quot;PC2&quot;) + xlab(&quot;PC1&quot;) + geom_segment(aes(x = 0, 
+    y = 0, xend = Comp.1, yend = Comp.2), arrow = arrow(), col = &quot;blue&quot;) + 
+    geom_label_repel(aes(x = Comp.1, y = Comp.2, label = rowname)) + 
+    ggtitle(&quot;PCA Plot of Loadings of Relevant Principal Components&quot;)</code></pre>
+<p><img src="../project1_files/figure-html/unnamed-chunk-14-1.png" width="672" style="display: block; margin: auto;" /></p>
+<p>As we can see in the loading plot, majority of the arrows point are skewed towards PC1. This can explain as to why on the Scree Plot, about 52% variance is accounted for by the PC1, while only 23% variance is accounted for in PC2.
+For the majority of the variables, we observe a negative and weak correlation as we saw in the heat correlation map. The only variable with a positive correlation is the Combined FIPS Code, which represents a county and state that shares a combined code.</p>
+<div id="neatness-holisticdiscretionary-points-4-pts" class="section level4">
+<h4>6. Neatness, Holistic/Discretionary Points (4 pts)</h4>
+<ul>
+<li>Keep things looking nice! Your project should not knit to more than 30 or so pages (probably closer to 10-20)! You will lose points if you print out your entire dataset(s), have terrible formatting, etc. If you start your project in a fresh .Rmd file, you are advised to copy set-up code below and include it: this will do things like automatically truncate if you accidentally print out a huge dataset, etc. Imagine this is a polished report you are giving to your PI or boss to summarize your work researching a topic.</li>
+</ul>
+<pre class="r"><code>## paste this chunk into the ```{r setup} chunk at the top of
+## your project 1 .Rmd file
+
+knitr::opts_chunk$set(echo = TRUE, eval = TRUE, fig.align = &quot;center&quot;, 
+    warning = F, message = F, tidy = TRUE, tidy.opts = list(width.cutoff = 60), 
+    R.options = list(max.print = 100))</code></pre>
+</div>
+</div>
+<div id="where-do-i-find-data" class="section level3">
+<h3>Where do I find data?</h3>
+<p>OK, brace yourself!</p>
+<p>You can choose ANY datasets you want that meet the above criteria for variables and observations. I’m just sitting here but off the top of my head, if you are into amusement parks, you could look at amusement-park variables, including ticket sales per day etc.; then you could join this by date in weather data. If you are interested in Game of Thrones, you could look at how the frequency of mentions of character names (plus other character variables) and the frequency of baby names in the USA…You could even take your old Biostats data and merge in new data (e.g., based on a Google forms timestamp).</p>
+<p>You could engage in some “me-search”: You can <a href="https://support.spotify.com/ca-en/article/data-rights-and-privacy-settings/">request your Spotify data</a> or <a href="https://help.netflix.com/en/node/101917">download Netflix viewing activity</a>, Amazon purchase history, etc. You can use your Google Fit/Fitbit/Apple watch data, etc. These can be combined (e.g., with each other, with other data sources).</p>
+<p>You can make it as serious as you want, or not, but keep in mind that you will be incorporating this project into a portfolio webpage for your final in this course, so choose something that really reflects who you are, or something that you feel will advance you in the direction you hope to move career-wise, or something that you think is really neat. On the flip side, regardless of what you pick, you will be performing all the same tasks, so it doesn’t end up being that big of a deal.</p>
+<p>If you are totally clueless and have no direction at all, log into the server and type</p>
+<pre class="r"><code>data(package = .packages(all.available = TRUE))</code></pre>
+<p>This will print out a list of <strong>ALL datasets in ALL packages</strong> installed on the server (a ton)! Scroll until your eyes bleed! Actually, do not scroll that much… To start with something more manageable, just run the command on your own computer, or just run <code>data()</code> to bring up the datasets in your current environment. To read more about a dataset, do <code>?packagename::datasetname</code>.</p>
+<p>If it is easier for you, and in case you don’t have many packages installed, a list of R datasets from a few common packages (also downloadable in CSV format) is given at the following website: <a href="https://vincentarelbundock.github.io/Rdatasets/datasets.html" class="uri">https://vincentarelbundock.github.io/Rdatasets/datasets.html</a> (including types/numbers of variables in each)</p>
+<ul>
+<li><p>A good package to download for fun/relevant data is <code>fivethiryeight</code>. Just run <code>install.packages("fivethirtyeight"), load the packages with</code>library(fivethirtyeight)<code>, run</code>data()`, and then scroll down to view the datasets. Here is an online list of all 127 datasets (with links to the 538 articles). Lots of sports, politics, current events, etc: <a href="https://cran.r-project.org/web/packages/fivethirtyeight/vignettes/fivethirtyeight.html" class="uri">https://cran.r-project.org/web/packages/fivethirtyeight/vignettes/fivethirtyeight.html</a></p></li>
+<li><p>If you have already started to specialize (e.g., ecology, epidemiology) you might look at discipline-specific R packages (vegan, epi, respectively). We will be using some tools from these packages later in the course, but they come with lots of data too, which you can explore according to the directions above</p></li>
+<li><p>However, you <em>emphatically DO NOT</em> have to use datasets available via R packages! In fact, I would much prefer it if you found the data from completely separate sources and brought them together (a much more realistic experience in the real world)! You can even reuse data from your SDS328M project, provided it shares a variable in common with other data which allows you to merge the two together (e.g., if you still had the timestamp, you could look up the weather that day: <a href="https://www.wunderground.com/history/" class="uri">https://www.wunderground.com/history/</a>). If you work in a research lab or have access to old data, you could potentially merge it with new data from your lab!</p></li>
+<li><p>Here is a curated list of interesting datasets (read-only spreadsheet format): <a href="https://docs.google.com/spreadsheets/d/1wZhPLMCHKJvwOkP4juclhjFgqIY8fQFMemwKL2c64vk/edit" class="uri">https://docs.google.com/spreadsheets/d/1wZhPLMCHKJvwOkP4juclhjFgqIY8fQFMemwKL2c64vk/edit</a></p></li>
+<li><p>Here is another great compilation of datasets: <a href="https://github.com/rfordatascience/tidytuesday" class="uri">https://github.com/rfordatascience/tidytuesday</a></p></li>
+<li><p>Here is the UCI Machine Learning Repository: <a href="https://archive.ics.uci.edu/ml/index.php" class="uri">https://archive.ics.uci.edu/ml/index.php</a></p>
+<ul>
+<li>See also <a href="https://en.wikipedia.org/wiki/List_of_datasets_for_machine-learning_research#Biological_data" class="uri">https://en.wikipedia.org/wiki/List_of_datasets_for_machine-learning_research#Biological_data</a></li>
+</ul></li>
+<li><p>Here is another good general place to look: <a href="https://www.kaggle.com/datasets" class="uri">https://www.kaggle.com/datasets</a></p></li>
+<li><p>To help narrow your search down or to see interesting variable ideas, check out <a href="https://www.tylervigen.com/spurious-correlations" class="uri">https://www.tylervigen.com/spurious-correlations</a>. This is the spurious correlations website, and it is fun, but if you look at the bottom of each plot you will see sources for the data. This is a good place to find very general data (or at least get a sense of where you can scrape data together from)!</p></li>
+<li><p>If you are interested in medical data, check out</p></li>
+<li><p>If you are interested in scraping UT data, the university makes <em>loads</em> of data public (e.g., beyond just professor CVs and syllabi). Check out all the data that is available in the statistical handbooks: <a href="https://reports.utexas.edu/statistical-handbook" class="uri">https://reports.utexas.edu/statistical-handbook</a></p></li>
+</ul>
+<div id="broader-data-sources" class="section level5">
+<h5>Broader data sources:</h5>
+<p><a href="www.data.gov">Data.gov</a> 186,000+ datasets!</p>
+<p><a href="Social%20Explorer">Social Explorer</a> is a nice interface to Census and American Community Survey data (more user-friendly than the government sites). May need to sign up for a free trial.</p>
+<p><a href="www.bls.gov">U.S. Bureau of Labor Statistics</a></p>
+<p><a href="www.census.gov">U.S. Census Bureau</a></p>
+<p><a href="www.gapminder.org/data">Gapminder</a>, data about the world.</p>
+<p>…</p>
+</div>
+</div>
+</div>
+
+            
+        <hr>         <div class="related-posts">
+                <h5>Related Posts</h5>
+                
+              </div> 
+            </div>
+          </div>
+
+   <hr>  <div class="disqus">
+  <div id="disqus_thread"></div>
+  <script type="text/javascript">
+
+    (function() {
+      
+      
+      if (window.location.hostname == "localhost")
+        return;
+
+      var disqus_shortname = '';
+      var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+      dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+      (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    })();
+  </script>
+  <noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+  <a href="http://disqus.com/" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a>
+</div> 
+        </div>
+      </div>
+    </div>
+
+    
+    <footer>
+  <div id="footer">
+    <div class="container">
+      <p class="text-muted">&copy; All rights reserved. Powered by <a href="https://gohugo.io/">Hugo</a> and
+      <a href="http://www.github.com/nurlansu/hugo-sustain/">sustain</a> with ♥</p>
+    </div>
+  </div>
+</footer>
+<div class="footer"></div>
+
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
+
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
+<script src="../js/docs.min.js"></script>
+<script src="../js/main.js"></script>
+
+<script src="../js/ie10-viewport-bug-workaround.js"></script>
+
+
+    
+  </body>
+</html>

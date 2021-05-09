@@ -1,0 +1,358 @@
+---
+title: 'Project 1: Exploratory Data Analysis'
+author: "SDS348"
+date: ''
+output:
+  html_document:
+    toc: yes
+    toc_float:
+      collapsed: no
+      smooth_scroll: yes
+  pdf_document:
+    toc: no
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE, eval = TRUE, fig.align = "center", warning = F, message = F,
+tidy=TRUE, tidy.opts=list(width.cutoff=60), R.options=list(max.print=100))
+```
+
+## Data Wrangling and Data Exploration
+
+## Instructions
+A knitted R Markdown document (ideally HTML) and the raw R Markdown file (as .Rmd) should both be submitted to Canvas by 11:59pm on the due date. These two documents will be graded jointly, so they must be consistent (i.e., don’t change the R Markdown file without also updating the knitted document).
+
+The text of the document should provide a narrative structure around your code/output. All results presented must have corresponding code. Any answers/results/plots etc. given without the corresponding R code that generated the result will not be considered. Furthermore, all code contained in your final project document must work correctly (knit early, knit often)! Please do not include any extraneous code or code which produces error messages. (Code that produces warnings is acceptable, as long as you understand what the warnings mean!)
+
+##Find data:
+
+Find two (!) datasets with one variable in common (e.g., dates, times, states, counties, countries, sports players), both with at least 50 observations (i.e., rows) in each. Please think very carefully about whether it makes sense to combine your datasets! If you find one dataset with 50 patients and it has their age, and you find another dataset with 50 *different* patients that has their ages, it makes no sense to join them based on age (you would just be pairing up random people of the same age).
+
+When combined, the resulting/final dataset must have **at least 4 different variables (at least 3 numeric) in addition to the common variable** (i.e., five variables total).
+
+You can have as many variables as you would like! If you found two datasets that you like but they don't have enough variables, find a third dataset with the same common variable and join all three.
+
+
+
+##Guidelines
+
+1. If the datasets are not tidy, you will need to reshape them so that every observation has its own row and every variable its own column. If the datasets are both already tidy, you will make them untidy with `pivot_wider()/spread()` and then tidy them again with `pivot_longer/gather()` to demonstrate your use of the functions. It's fine to wait until you have your descriptives to use these functions (e.g., you might want to pivot_wider() to rearrange the data to make your descriptive statistics easier to look at); it's fine long as you use them at least once!
+
+    - Depending on your datasets, it might be a good idea to do this before joining. For example, if you have a dataset you like with multiple measurements per year, but you want to join by year, you could average over your numeric variables to get means/year, do counts for your categoricals to get a counts/year, etc.
+    
+    - If your data sets are already tidy, demonstrate the use of `pivot_longer()/gather()` and `pivot_wider()/spread()` on all or part of your data at some point in this document (e.g., after you have generated summary statistics in part 3, make a table of them wide instead of long).
+    
+
+2. Join your 2+ separate data sources into a single dataset based on a common ID variable! If you can't find a good pair datasets to join, you may split one main dataset into two different datasets with a common ID variable in each, and then join them back together based on that common ID, but this is obviously less than ideal.
+
+    - You will document the type of join that you do (left/right/inner/full), including a discussion of how many observations were in each dataset, which observations in each dataset were dropped (if any) and why you chose this particular join. 
+
+
+3. Create summary statistics
+
+    - Use *all six* core `dplyr` functions (`filter, select, arrange, group_by, mutate, summarize`) to manipulate and explore your dataset. For mutate, create a  new variable that is a function of at least one other variable, preferably using a dplyr vector function (see dplyr cheatsheet). It's totally fine to use the `_if`, `_at`, `_all` versions of mutate/summarize instead (indeed, it is encouraged if you have lots of variables)
+    
+    - Create summary statistics (`mean, sd, var, n, quantile, min, max, n_distinct, cor`, etc) for each of your numeric variables both overall and after grouping by one of your categorical variables (either together or one-at-a-time; if you have two categorical variables, try to include at least one statistic based on a grouping of two categorical variables simultaneously). If you do not have any categorical variables, create one using mutate (e.g., with `case_when` or `ifelse`) to satisfy the `group_by` requirements above. Ideally, you will find a way to show these summary statistics in an easy-to-read table (e.g., by reshaping). (You might explore the kable package for making pretty tables!) If you have lots of numeric variables (e.g., 10+), or your categorical variables have too many categories, just pick a few (either numeric variables or categories of a categorical variable) and summarize based on those. It would be a good idea to show a correlation matrix for your numeric variables (you will need it to make one of your plots).
+ 
+4. Make visualizations (three plots)
+
+    -  Make a correlation heatmap of your numeric variables
+    -  Create at least two additional plots of your choice with ggplot that highlight some of the more interesting features of your data.
+    - Each plot (besides the heatmap) should have at least three variables mapped to separate aesthetics
+    - Each should use different geoms (e.g., don't do two geom_bars)
+    - At least one plot should include `stat="summary"`
+    - Each plot should include a supporting paragraph describing the relationships that are being visualized and any trends that are apparent
+        - It is fine to include more, but limit yourself to 4. Plots should avoid being redundant! Four bad plots will get a lower grade than two good plots, all else being equal.
+    - Make them pretty! Use correct labels, etc.
+    
+    
+5. Perform k-means/PAM clustering or PCA on (at least) your numeric variables.
+
+    - Include all steps as we discuss in class, including a visualization.
+
+    - If you don't have at least 3 numeric variables, or you want to cluster based on categorical variables too, convert them to factors in R, generate Gower's dissimilarity matrix on the data, and do PAM clustering on the dissimilarities.
+    
+    - Show how you chose the final number of clusters/principal components 
+    
+    - Interpret the final clusters/principal components 
+
+    - For every step, document what your code does (in words) and what you see in the data!     
+
+<P style="page-break-before: always">
+\newpage
+    
+## Rubric
+
+Prerequisite: Finding appropriate data from at least two sources per the instructions above: Failure to do this will result in a 0! You will submit a .Rmd file and a knitted document (html/pdf).
+
+###These are the links to both of my datasets. 
+###https://www.kaggle.com/thaddeussegura/us-teen-birth-rates-ages-1519-20032018
+###https://vincentarelbundock.github.io/Rdatasets/datasets.html (PublicSchools)
+
+```{r}
+library(tidyverse)
+print(getwd())
+Teen_BIRTHRATES<- read_csv("Teen_Birth_Rates.csv")
+PublicSchools <- read_csv("PublicSchools.csv")
+```
+
+
+
+###0. Introduction (4  pts)
+
+- Write a narrative introductory paragraph or two describing the datasets you have chosen, the variables they contain, how they were acquired, and why they are interesting to you. Expand on potential associations you may expect, if any.
+
+"PublicSchools" is one of the datasets I have chosen that showcases the amount of expenses and income it receives on average from various school districts by state. "Teen_Birth_Rates" is other dataset I have chosen. I simplified the name for convience as shown above. In "Teen_Birth_Rates", it contains birth rate of teenagers per every 1,000 individuals from 2003-2018. In addition to this, the dataset provides birthrate per county in each US State, and the age group spanning from 15 to 19 years old. 
+
+These datasets are interesting to me, because in my other course of Sociology Health & Illness, we often discuss the relationship between funding and how it affects health across US populations. Teenage pregnancy is not the only health dimensions we analyze in the class. I wanted to see how related the two are based on the datasets I have found. 
+
+
+### 1. Tidying: Rearranging Wide/Long (8 pts)
+
+- Tidy the datasets (using the `tidyr` functions `pivot_longer`/`gather` and/or `pivot_wider`/`spread`) 
+- If you data sets are already tidy, be sure to use those functions somewhere else in your project (e.g., for rearranging summary statistics)
+- Document the process (describe in words what was done)
+
+I used the pivot_wider function to create new columns of each county and assigned them the value of their birth rates per each year in the dataset (2003-2018). I peformed the function below in my joining/merging section, because I needed my dataset with no N/A's for it to function properly. 
+
+###2. Joining/Merging (8 pts)
+
+- Join your datasets into one using a `dplyr` join function
+- If you have multiple observations on the joining variable in either dataset, fix this by collapsing via summarize
+- Discuss the process in words, including why you chose the join you did
+- Discuss which cases were dropped, if any, and potential problems with this
+```{r}
+colnames(PublicSchools) 
+PublicSchool <- PublicSchools
+colnames(PublicSchool)[colnames(PublicSchool) == "X1"] <- "State"
+colnames(PublicSchool)
+Combined<- full_join(Teen_BIRTHRATES,PublicSchool, by="State")
+CombinedNONA <- Combined %>% na.omit()
+
+library(tidyverse)
+
+CombinedNONA %>% 
+  pivot_wider(names_from = County, values_from = "Birth Rate")
+
+
+```
+ 
+I chose full join, because I wanted to keep all the data from both datasets. If I had chosen leftjoin or righjoin I would have lost important data such as birth rate, expenditures, and expenses. PublicSchools would not have the birthrate data and would classify the whole column as "NA" which is not the case, while Teen_Birthrates would have the whole column of expenditures and expenses as "NA", which is not true because public schools do spend and receive money. If these columns were dropped, this would be problematic when we perform summary statistics and are unable to do so to see the relationship between these variables. I chose to join both of the datasets by state, because based on the schools' funding end expenses it may serve as a predictor of teen pregnancies. The schools' funding by state can help determine a trend if schools require more funding to help educate teens better about sex education to prevent pregnancies.
+In addition, I chose to remove all "NA"s from the merged dataset to clean the data. By doing so, I lost 1,169 observations that did not fit in the merge. 
+
+### 3. Wrangling (36 pts)
+
+- Use all six core `dplyr` functions in the service of generating summary tables/statistics (12 pts)
+    - Use mutate at least once to generate a variable that is a function of at least one other variable
+
+- Compute summary statistics for each of your variables using `summarize` alone and with `group_by` (if you have more than 10 variables, fine to just focus on 10) (20 pts)
+    - Use at least 5 unique functions inside of summarize (e.g., mean, sd)
+    - For at least 2, use summarize after grouping by a categorical variable. Create one by dichotomizing a numeric if necessary
+    - If applicable, at least 1 of these should group by two categorical variables
+
+- Summarize/discuss all (or the most interesting) results in no more than two paragraphs (4 pts)
+```{r}
+library(dplyr)
+CombinedNONA%>%arrange(desc(`Birth Rate`))
+CombinedNONA%>%arrange(desc(Income))
+CombinedNONA%>%select(State,County,Year, Income,Expenditure,`Birth Rate`)
+CombinedNONA%>%filter(County=="Autauga")%>%mutate(County=str_replace( County,"Autauga","Alabama"))
+CombinedNONA%>%group_by("State")%>%summarize(`Birth Rate`)
+CombinedNONA%>% summarise_all(n_distinct)
+CombinedNONA%>%summarise_all(mean)
+CombinedNONA%>% summarise_if(is.numeric, sd, na.rm = T)
+CombinedNONA%>% summarise_if(is.numeric, var, na.rm = T)
+CombinedNONA%>% summarise_if(is.numeric, quantile, na.rm = T)
+CombinedNONA%>% summarise_if(is.numeric, min, na.rm = T)
+CombinedNONA%>% summarise_if(is.numeric, max, na.rm = T)
+
+```
+I think some interesting findings from this is that North Dakota and Texas consistently have the highest birth rates out of all of the states in the United States. In North Dakota in 2003, there were 143.4 births per 1,000 individuals, which is awfully high. Another factor I find interesting from the summary statistics is that the average income of public schools is only $7401.49 when the highest (max) is $10,851 and the lowest (min) is $5736. It is such a huge gap in income of schooling depending on location. There is also a large gap in the expenditures of public school knowing that the lowest is $259, and the highest being $821. Lastly, Alaska is the state with the highest income for its public schools. I find it really interesting, because I was expecting a more densely populated state to receive more funding. 
+
+
+### 4. Visualizing (30 pts)
+
+- Create a correlation heatmap of your numeric variables the way we did in class
+
+- Create two effective, polished plots with ggplot
+
+    - Each plot should map 3+ variables to aesthetics 
+    - Each plot should have a title and clean labeling for all mappings
+    - Change at least one default theme element and color for at least one mapping per plot
+    - For at least one plot, add more tick marks (x, y, or both) than are given by default
+    - For at least one plot, use the stat="summary" function
+    - Supporting paragraph or two (for each plot) describing the relationships/trends that are apparent
+```{r}
+#Correlation Heatmap of Numeric Variables 
+
+library(ggplot2)
+Combinedcorr <- CombinedNONA %>% select_if(is.numeric)%>%cor(use="pair")
+Heatcorr <- Combinedcorr %>% as.data.frame() %>% rownames_to_column ("var1")%>% pivot_longer(-1, names_to="var2",values_to="correlation")
+Heatcorr%>% ggplot(aes(var1,var2,fill=correlation))+geom_tile()+scale_fill_gradient(low="white", high="Blue")+geom_text(aes(label=round(correlation,2)), color="black", size=2)+theme(axis.text.x=element_text(angle=90,hjust=1))+coord_fixed()+ggtitle("Correlation Based on Numeric Variables")
+```
+
+Based on the correlation heat map, we observe there is a high correlation relationship between expenditure and income. We can infer there is a correlation between the two in that if the school receives more money, then it will spend more money. The opposite relationship is also suggested such as the more money the school spends, then the more funding it will receive from the government. We also observe that birth rate and income is negatively correlated. This suggests a lack of correlation between these two variable and more funding does not help reduce teenage pregnancy rates. We also see a negative correlation between expenditure and birth rates. Even if the schools use the income provided to them through expenditure, this does not help mitigate the rates of teen pregnancy in public schools.This opposes my original thought of the more funding a school received, the less likelihood of teenage pregnancy. We also observe a lack of a correlation between expenditure and teenage pregnancy. Even if schools spend a large sum of money, it does not go directly to the efforts to educate students. Schools in the U.S. do not necessarily push their funding directly to sex education of students.Although I found no relationship between my variables, I think this highlights the need for reform, because more funding and expenses does not help with the prevention of teenage pregnancy. 
+
+
+
+
+```{r}
+#Graph 1 GGPLOT 
+state <- CombinedNONA$State
+Expenditure <- CombinedNONA$Expenditure
+birthrates <- CombinedNONA$`Birth Rate`
+ggplot(CombinedNONA, aes(x=Expenditure,y=birthrates,color=state))+ geom_point(size=0.25)+ggtitle("Expenditure & Birthrates by State")+ xlab("Expenditure")+ylab("Birthrates")+ theme_minimal()
+
+```
+
+Based on the scatterplot above, we see expenditures and birthrates plotted by state. Each of the points represents a year. We consistently see Alaska having the highest expenditures of all public schools, yet having one of the highest teen birth rates in the United States. We also observe that Texas and North Dakota have the higest rates of teen pregnancy despite having higher expenditures than other states with lower rates of teen pregnancy. This reiterates the weak relationship between Expenditures and Birth Rates due to the confounding variable of schools pushing funding toward athletics or other programs outside sex education. Again, this plot highlights the need for better sex education programs in public schools. 
+
+
+```{r}
+#Graph 2 GGPLOT
+income <- CombinedNONA$Income
+ggplot(CombinedNONA, aes(x=income, y=birthrates, color=state))+ geom_point(size=0.25)+ggtitle("Income & Birthrates by State")+ xlab("Income")+ylab("Birthrates")
+```
+  
+In this scatterplot, we observe Income and Birth Rates plotted by State. Again, each point represents a year. Wyoming and Nebraska are the states with the highest teen birth rates when plotted against Income. Based on the plot, we can infer these two states receive significantly more income/funding than other states with lower rates of teenage pregnancy. We also see Alaska again being the state with the highest funding and having one of the highest teenage birth rates. Another confounding variable that could explain this trend is the amount needed to keep the public schools functioning. As noted in the previous plot, Alaska does spend the most money, and this plot reinforces this possible confounding variable in that the funding of the school matches the amount needed to compensate to keep the school open. 
+  
+    
+### 5. Dimensionality Reduction (20 pts) 
+
+- Either k-means/PAM clustering or PCA (inclusive "or") should be performed on at least three of your variables (3 is just the minimum: using more/all of them will make this much more interesting!)
+
+    - All relevant steps discussed in class 
+    - A visualization of the clusters or the first few principal components (using ggplot2)
+    - Supporting paragraph or two describing results found, interpreting the clusters/PCs etc.
+```{r}
+library(tidyverse)
+library(cluster)
+expenditure <- CombinedNONA$Expenditure
+income <- CombinedNONA$Income
+birthrates <- CombinedNONA$Income
+pcaCombined <- CombinedNONA%>%filter(Year=="2018")%>%select(-"Year")
+pcaCombined[is.na(pcaCombined)]=0
+pca_Combinednum <- pcaCombined%>%select_if(is.numeric,na.rm=T)%>%scale
+PCA_NumCombined <- princomp(pca_Combinednum)
+
+
+eigvalue<- PCA_NumCombined$sdev^2
+varprop = round(eigvalue/sum(eigvalue), 2)
+ggplot() + geom_bar(aes(y = varprop, x = 1:6), stat = "identity") + 
+    xlab("") + geom_path(aes(y = varprop, x = 1:6)) + geom_text(aes(x = 1:6, 
+    y = varprop, label = round(varprop, 2)), vjust = 1, col = "blue", 
+    size = 5) + scale_y_continuous(breaks = seq(0, 1.0, 0.2), 
+    labels = scales::percent) + scale_x_continuous(breaks = 1:10) + 
+    ggtitle("Combined Data Scree Plot for PCA") + xlab("Principal Component") + ylab("Percentage of Variance")
+```
+```{r}
+eigvalue
+```
+```{r}
+PCAPLOT <- CombinedNONA %>% select_if(is.numeric, na.rm = T)
+PCA_PLOT <- PCAPLOT %>% filter(Year == "2018")%>% select(`Birth Rate`)
+
+PCA_NumCombined$scores %>% as.data.frame() %>% cbind.data.frame(PCA_PLOT) %>% 
+mutate(PC1 = PCA_NumCombined$scores[, 1], PC2 = PCA_NumCombined$scores[,2]) %>% ggplot(aes(PC1, PC2)) + geom_point() + coord_fixed() + ggtitle("PC Plot of Relevant Principal Components") + xlab("PC1 Score") +  ylab("PC2 Score")
+
+```
+    
+
+```{r}
+PCA_NumCombined$scores[, 1:2] %>% as.data.frame %>% top_n(3, Comp.1)
+```
+```{r}
+PCA_NumCombined$scores[, 1:2] %>% as.data.frame %>% top_n(-3, Comp.1)
+```
+```{r}
+PCA_NumCombined$scores[, 1:2] %>% as.data.frame %>% top_n(3, Comp.2)
+```
+```{r}
+PCA_NumCombined$scores[, 1:2] %>% as.data.frame %>% top_n(-3, Comp.2)
+```
+```{r}
+library(ggrepel)
+PCA_NumCombined$loadings[1:6, 1:2] %>% as.data.frame %>% rownames_to_column %>% 
+    ggplot() + geom_hline(aes(yintercept = 0), lty = 2) + geom_vline(aes(xintercept = 0), 
+    lty = 2) + ylab("PC2") + xlab("PC1") + geom_segment(aes(x = 0, 
+    y = 0, xend = Comp.1, yend = Comp.2), arrow = arrow(), col = "blue") + 
+    geom_label_repel(aes(x = Comp.1, y = Comp.2, label = rowname)) + 
+    ggtitle("PCA Plot of Loadings of Relevant Principal Components") 
+    
+```
+
+As we can see in the loading plot, majority of the arrows point are skewed towards PC1. This can explain as to why on the Scree Plot, about 52% variance is accounted for by the PC1, while only 23% variance is accounted for in PC2. 
+For the majority of the variables, we observe a negative and weak correlation as we saw in the heat correlation map. The only variable with a positive correlation is the Combined FIPS Code, which represents a county and state that shares a combined code. 
+
+#### 6. Neatness, Holistic/Discretionary Points (4 pts)
+
+- Keep things looking nice! Your project should not knit to more than 30 or so pages (probably closer to 10-20)! You will lose points if you print out your entire dataset(s), have terrible formatting, etc. If you start your project in a fresh .Rmd file, you are advised to copy set-up code below and include it: this will do things like automatically truncate if you accidentally print out a huge dataset, etc. Imagine this is a polished report you are giving to your PI or boss to summarize your work researching a topic.
+
+```{r eval=F}
+## paste this chunk into the ```{r setup} chunk at the top of your project 1 .Rmd file
+
+knitr::opts_chunk$set(echo = TRUE, eval = TRUE, fig.align = "center", warning = F, message = F,
+tidy=TRUE, tidy.opts=list(width.cutoff=60), R.options=list(max.print=100))
+```
+
+
+### Where do I find data?
+
+OK, brace yourself!
+
+You can choose ANY datasets you want that meet the above criteria for variables and observations. I'm just sitting here but off the top of my head, if you are into amusement parks, you could look at amusement-park variables, including ticket sales per day etc.; then you could join this by date in weather data. If you are interested in Game of Thrones, you could look at how the frequency of mentions of character names (plus other character variables) and the frequency of baby names in the USA...You could even take your old Biostats data and merge in new data (e.g., based on a Google forms timestamp).
+
+You could engage in some "me-search": You can [request your Spotify data](https://support.spotify.com/ca-en/article/data-rights-and-privacy-settings/) or [download Netflix viewing activity](https://help.netflix.com/en/node/101917), Amazon purchase history, etc. You can use your Google Fit/Fitbit/Apple watch data, etc. These can be combined (e.g., with each other, with other data sources).
+
+You can make it as serious as you want, or not, but keep in mind that you will be incorporating this project into a portfolio webpage for your final in this course, so choose something that really reflects who you are, or something that you feel will advance you in the direction you hope to move career-wise, or something that you think is really neat. On the flip side, regardless of what you pick, you will be performing all the same tasks, so it doesn't end up being that big of a deal.
+
+If you are totally clueless and have no direction at all, log into the server and type 
+
+```{R eval=F}
+data(package = .packages(all.available = TRUE))
+```
+
+This will print out a list of **ALL datasets in ALL packages** installed on the server (a ton)! Scroll until your eyes bleed! Actually, do not scroll that much... To start with something more manageable, just run the command on your own computer, or just run `data()` to bring up the datasets in your current environment. To read more about a dataset, do `?packagename::datasetname`. 
+
+If it is easier for you, and in case you don't have many packages installed, a list of R datasets from a few common packages (also downloadable in CSV format) is given at the following website: https://vincentarelbundock.github.io/Rdatasets/datasets.html (including types/numbers of variables in each)
+
+- A good package to download for fun/relevant data is `fivethiryeight`. Just run `install.packages("fivethirtyeight"), load the packages with `library(fivethirtyeight)`, run `data()`, and then scroll down to view the datasets. Here is an online list of all 127 datasets (with links to the 538 articles). Lots of sports, politics, current events, etc: https://cran.r-project.org/web/packages/fivethirtyeight/vignettes/fivethirtyeight.html
+
+- If you have already started to specialize (e.g., ecology, epidemiology) you might look at discipline-specific R packages (vegan, epi, respectively). We will be using some tools from these packages later in the course, but they come with lots of data too, which you can explore according to the directions above
+
+- However, you *emphatically DO NOT* have to use datasets available via R packages! In fact, I would much prefer it if you found the data from completely separate sources and brought them together (a much more realistic experience in the real world)! You can even reuse data from your SDS328M project, provided it shares a variable in common with other data which allows you to  merge the two together (e.g., if you still had the timestamp, you could look up the weather that day: https://www.wunderground.com/history/). If you work in a research lab or have access to old data, you could potentially merge it with new data from your lab!
+
+- Here is a curated list of interesting datasets (read-only spreadsheet format): https://docs.google.com/spreadsheets/d/1wZhPLMCHKJvwOkP4juclhjFgqIY8fQFMemwKL2c64vk/edit
+
+- Here is another great compilation of datasets: https://github.com/rfordatascience/tidytuesday
+
+- Here is the UCI Machine Learning Repository: https://archive.ics.uci.edu/ml/index.php
+
+    - See also https://en.wikipedia.org/wiki/List_of_datasets_for_machine-learning_research#Biological_data
+
+- Here is another good general place to look: https://www.kaggle.com/datasets
+
+- To help narrow your search down or to see interesting variable ideas, check out https://www.tylervigen.com/spurious-correlations. This is the spurious correlations website, and it is fun, but if you look at the bottom of each plot you will see sources for the data. This is a good place to find very general data (or at least get a sense of where you can scrape data together from)!
+
+- If you are interested in medical data, check out 
+
+- If you are interested in scraping UT data, the university makes *loads* of data public (e.g., beyond just professor CVs and syllabi). Check out all the data that is available in the statistical handbooks: https://reports.utexas.edu/statistical-handbook
+
+##### Broader data sources:
+
+[Data.gov](www.data.gov) 186,000+ datasets!
+
+[Social Explorer](Social Explorer) is a nice interface to Census and American Community Survey data (more user-friendly than the government sites). May need to sign up for a free trial.
+
+[U.S. Bureau of Labor Statistics](www.bls.gov)
+
+[U.S. Census Bureau](www.census.gov)
+
+[Gapminder](www.gapminder.org/data), data about the world.
+
+...
+
+
+
+
+
