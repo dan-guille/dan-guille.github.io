@@ -12,17 +12,24 @@ description: '
 
 [Link to project 2](/project/project2/)
 
+Hello ~Welcome to my blog~ 
+
+Being able to use R Studio and Python increases your knowledge stats! Who wouldn't want to know two extremely popular coding languages?! What's even more neat is that you can use both at the same time where they can "talk" to one another.
+
+This is done by the library package "reticulate" in R Studio! Once you load the package, you should make sure to specify, which language you want to run by using either {r} or {python}. Something neat about this system is that you can name items the same title! In a broader sense, besides making cute sentences, you can rename data sets to use in both R Studio and Python. Allowing you to work with data in both coding languages if a case arises where one is needed over the other. 
 
 
 ```{r}
 library(reticulate)
-hi<-"Hello"
+cool<-"~I love"
 ```
 ```{python}
-hi="world"
-print(r.hi,hi)
+beanz="gardening!~"
+print(r.cool,beanz)
 ```
 ```{r}
-cat(c(hi,py$hi))
+cat(c(cool,py$beanz))
 ```
+![](/post/2021-05-09-r-studio-and-python_files/sweet_potato.JPG)
 
+*Another photo of my sweet potato, because I am absolutely obsessed! I cannot wait to put in the garden bed.
