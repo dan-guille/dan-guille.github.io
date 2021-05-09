@@ -9,3 +9,20 @@ description: '
 '
 ---
 [Link to project 1](/project/project1/)
+
+[Link to project 2](/project/project2/)
+
+
+
+```{r}
+library(reticulate)
+hi<-"Hello"
+```
+```{python}
+hi="world"
+print(r.hi,hi)
+```
+```{r}
+cat(c(hi,py$hi))
+```
+
