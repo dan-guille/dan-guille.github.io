@@ -13,9 +13,11 @@
       <pubDate>Sun, 09 May 2021 00:00:00 +0000</pubDate>
       
       <guid>/post/2021/05/09/r-studio-and-python/</guid>
-      <description> Link to project 1
+      <description>Link to project 1
 Link to project 2
-library(reticulate) hi&amp;lt;-&amp;quot;Hello&amp;quot; hi=&amp;quot;world&amp;quot; print(r.hi,hi) ## Hello world cat(c(hi,py$hi)) ## Hello world </description>
+Hello ~Welcome to my blog~
+Being able to use R Studio and Python increases your knowledge stats! Who wouldn’t want to know two extremely popular coding languages?! What’s even more neat is that you can use both at the same time where they can “talk” to one another.
+This is done by the library package “reticulate” in R Studio! Once you load the package, you should make sure to specify, which language you want to run by using either {r} or {python}.</description>
     </item>
     
   </channel>
